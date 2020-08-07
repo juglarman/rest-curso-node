@@ -35,3 +35,6 @@ app.delete('/usuarios', function(req, res) {
 app.listen(process.env.PORT, () => {
     console.log("escuchando", process.env.PORT);
 })
+
+let a=[2,3,4];
+a[1]
