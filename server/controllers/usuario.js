@@ -3,8 +3,9 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 const app = express();
 const Usuario = require('../models/usuario.model');
+const { verificatoken, verificaadmin } = require('../middlewares/autentication')
 
-app.get('/usuarios', function(req, res) {
+app.get('/usuarios', verificatoken, (req, res) => {
     let desde = req.query.desde || 1;
     desde = Number(desde)
     let limite = req.query.limite || 5;
@@ -30,7 +31,7 @@ app.get('/usuarios', function(req, res) {
         })
 });
 
-app.post('/usuarios', function(req, res) {
+app.post('/usuarios', [verificatoken, verificaadmin], function(req, res) {
     let body = req.body;
     let usuario = new Usuario({
         nombre: body.nombre,
@@ -57,7 +58,7 @@ app.post('/usuarios', function(req, res) {
 });
 
 
-app.put('/usuarios/:id', function(req, res) {
+app.put('/usuarios/:id', [verificatoken, verificaadmin], function(req, res) {
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
 
@@ -78,7 +79,7 @@ app.put('/usuarios/:id', function(req, res) {
 })
 
 
-app.delete('/usuarios/:id', function(req, res) {
+app.delete('/usuarios/:id', [verificatoken, verificaadmin], function(req, res) {
     let id = req.params.id;
     Usuario.findByIdAndUpdate(id, { estado: false }, { new: true }, (err, usuarioCambiado) => {
 
